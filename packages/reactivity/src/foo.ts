@@ -1,2 +1,1 @@
-const testName = "ggg";
-export default testName;
+export const testName = "ggg";

@@ -1,5 +1,4 @@
-import testName from "./foo";
-
 const reactivity = "reactivity";
 console.log(reactivity);
-console.log(testName);
+export * as foo from "./foo";
+export const bar = "bar";

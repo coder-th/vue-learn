@@ -2,6 +2,7 @@ import json from "@rollup/plugin-json";
 import ts from "rollup-plugin-typescript2";
 import resolvePlugin from "@rollup/plugin-node-resolve";
 import path from "path";
+console.log(process.env);
 // 找到  packages目录，
 const packagesDir = path.resolve(__dirname, "packages");
 // 找到当前要打包的包
@@ -37,8 +38,10 @@ function createOutputConfig(name, format) {
     },
   };
   return {
-    name,
-    sourcemap: true,
+    name: pkgOptions.name,
+    sourcemap: process.env.SOURCE_MAP
+      ? process.env.SOURCE_MAP === "true"
+      : true,
     ...outputFormatConfig[format],
   };
 }
@@ -60,4 +63,9 @@ function createConfig(format) {
     ],
   };
 }
-export default pkgOptions.formats.map((format) => createConfig(format));
+const inlineFormats = process.env.FORMATS && process.env.FORMATS.split(",");
+/**
+ * 最终要打包的规范，命令行的优先级高于package.json
+ */
+const packageFormats = inlineFormats || pkgOptions.formats;
+export default packageFormats.map((format) => createConfig(format));
