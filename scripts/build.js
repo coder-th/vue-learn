@@ -5,7 +5,6 @@ const path = require("path");
  * 拿到命令行的参数
  */
 const args = require("minimist")(process.argv.slice(2));
-console.log(args);
 /**
  * 当前要打包的文件夹
  */
