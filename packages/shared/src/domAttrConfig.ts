@@ -1,4 +1,4 @@
-import { makeMap } from './makeMap'
+import { makeMap } from "./makeMap";
 
 /**
  * On the client we only need to offer special cases for boolean attributes that
@@ -11,8 +11,8 @@ import { makeMap } from './makeMap'
  * - novalidate -> noValidate
  * - readonly -> readOnly
  */
-const specialBooleanAttrs = `itemscope,allowfullscreen,formnovalidate,ismap,nomodule,novalidate,readonly`
-export const isSpecialBooleanAttr = /*#__PURE__*/ makeMap(specialBooleanAttrs)
+const specialBooleanAttrs = `itemscope,allowfullscreen,formnovalidate,ismap,nomodule,novalidate,readonly`;
+export const isSpecialBooleanAttr = /*#__PURE__*/ makeMap(specialBooleanAttrs);
 
 /**
  * The full list is needed during SSR to produce the correct initial markup.
@@ -22,28 +22,28 @@ export const isBooleanAttr = /*#__PURE__*/ makeMap(
     `,async,autofocus,autoplay,controls,default,defer,disabled,hidden,` +
     `loop,open,required,reversed,scoped,seamless,` +
     `checked,muted,multiple,selected`
-)
+);
 
-const unsafeAttrCharRE = /[>/="'\u0009\u000a\u000c\u0020]/
-const attrValidationCache: Record<string, boolean> = {}
+const unsafeAttrCharRE = /[>/="'\u0009\u000a\u000c\u0020]/;
+const attrValidationCache: Record<string, boolean> = {};
 
 export function isSSRSafeAttrName(name: string): boolean {
   if (attrValidationCache.hasOwnProperty(name)) {
-    return attrValidationCache[name]
+    return attrValidationCache[name];
   }
-  const isUnsafe = unsafeAttrCharRE.test(name)
+  const isUnsafe = unsafeAttrCharRE.test(name);
   if (isUnsafe) {
-    console.error(`unsafe attribute name: ${name}`)
+    console.error(`unsafe attribute name: ${name}`);
   }
-  return (attrValidationCache[name] = !isUnsafe)
+  return (attrValidationCache[name] = !isUnsafe);
 }
 
 export const propsToAttrMap: Record<string, string | undefined> = {
-  acceptCharset: 'accept-charset',
-  className: 'class',
-  htmlFor: 'for',
-  httpEquiv: 'http-equiv'
-}
+  acceptCharset: "accept-charset",
+  className: "class",
+  htmlFor: "for",
+  httpEquiv: "http-equiv",
+};
 
 /**
  * CSS properties that accept plain numbers
@@ -58,7 +58,7 @@ export const isNoUnitNumericStyleProp = /*#__PURE__*/ makeMap(
     // SVG
     `fill-opacity,flood-opacity,stop-opacity,stroke-dasharray,stroke-dashoffset,` +
     `stroke-miterlimit,stroke-opacity,stroke-width`
-)
+);
 
 /**
  * Known attributes, this is used for stringification of runtime static nodes
@@ -82,4 +82,4 @@ export const isKnownAttr = /*#__PURE__*/ makeMap(
     `selected,shape,size,sizes,slot,span,spellcheck,src,srcdoc,srclang,srcset,` +
     `start,step,style,summary,tabindex,target,title,translate,type,usemap,` +
     `value,width,wrap`
-)
+);
