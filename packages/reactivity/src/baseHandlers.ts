@@ -36,9 +36,6 @@ export const shallowReadonlyHandlers = {
  */
 function createGetter(isReadonly = false, shallow = false) {
   return function get(target, key, receiver) {
-    console.log("只读:", isReadonly);
-    console.log("浅代理:", shallow);
-    console.log("代理的对象，key", target, key);
     const res = Reflect.get(target, key, receiver);
     if (!isReadonly) {
       // 不是只读的，说明需要待会数据更新后，要进行视图更新
@@ -70,10 +67,10 @@ function createSetter(isReadonly = false, shallow = false) {
         : hasOwn(target, key);
     if (!hadKey) {
       //   对象新增了属性,触发依赖的effect
-      console.log("对象新增了属性");
+      console.log("对象新增了属性", key);
     } else {
       // 对象的属性发生了更新,触发依赖的effect
-      console.log("对象的属性发生了更新");
+      console.log("对象的属性发生了更新", key);
     }
     const result = Reflect.set(target, key, value);
     return result;

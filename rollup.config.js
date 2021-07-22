@@ -59,6 +59,7 @@ const packageConfigs =
 if (process.env.NODE_ENV === "production") {
   addProductionConfig();
 }
+console.log("rollup配置", packageConfigs);
 export default packageConfigs;
 /**
  * 线上环境，进行tree-shaking打包
