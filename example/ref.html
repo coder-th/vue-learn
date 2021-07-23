@@ -11,18 +11,34 @@
 
 <body>
     <div id="app"></div>
-    <audio id="jp_audio_0" preload="metadata" src="http://ysting.ysxs8.com:81/恐怖悬疑/迁坟师/第001集_迁坟师爷爷.mp3"></audio>
+    <div id="container"></div>
 </body>
 <script>
-    const { ref, effect } = Vue;
-    const data = ref('tianheng');
-    console.log(data);
+    const { customRef, effect } = Vue;
+    const custom = function (value) {
+        return customRef((track, trigger) => {
+            const get = () => {
+                track()
+                return value
+            }
+            const set = (newVal) => {
+                value = newVal
+                trigger()
+            }
+            return {
+                get,
+                set
+            }
+        })
+    }
+    const data = custom('123')
     effect(() => {
-        app.innerHTML = data.value
+        container.innerHTML = data.value
+        console.log(custom('123'));
     })
     setTimeout(() => {
-        data.value = 123
-    }, 2000)
+        data.value = 456
+    }, 3000)
 </script>
 
 </html>

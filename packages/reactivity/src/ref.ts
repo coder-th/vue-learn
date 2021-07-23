@@ -59,4 +59,32 @@ class ObjectRefImpl {
     this._target[this._key] = newValue;
   }
 }
+/**
+ * 自定义ref
+ * @param factory
+ * @returns
+ */
+export function customRef(factory) {
+  return new CustomRefImpl(factory);
+}
 
+class CustomRefImpl {
+  public readonly __v_isRef = true;
+  public _get;
+  public _set;
+  constructor(public factory) {
+    const { get, set } = factory(
+      () => track(this, TrackOpTypes.GET, "value"),
+      () => trigger(this, TriggerOpTypes.SET, "value")
+    );
+    console.log(get, set);
+    this._get = get;
+    this._set = set;
+  }
+  get value() {
+    return this._get();
+  }
+  set value(newValue) {
+    this._set(newValue);
+  }
+}
