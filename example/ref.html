@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+</head>
+<script src="../packages/vue/dist/vue.global.js"></script>
+
+<body>
+    <div id="app"></div>
+    <audio id="jp_audio_0" preload="metadata" src="http://ysting.ysxs8.com:81/恐怖悬疑/迁坟师/第001集_迁坟师爷爷.mp3"></audio>
+</body>
+<script>
+    const { ref, effect } = Vue;
+    const data = ref('tianheng');
+    console.log(data);
+    effect(() => {
+        app.innerHTML = data.value
+    })
+    setTimeout(() => {
+        data.value = 123
+    }, 2000)
+</script>
+
+</html>

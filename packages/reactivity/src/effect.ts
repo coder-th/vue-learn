@@ -96,7 +96,6 @@ export function track(target, type, key) {
 }
 
 export function trigger(target, type, key?, newValue?, oldValue?) {
-  console.log(target, type, key, newValue, oldValue);
   // 如果这个属性没有被收集过 effect
   const depsMap = targetMap.get(target);
   if (!depsMap) return;
