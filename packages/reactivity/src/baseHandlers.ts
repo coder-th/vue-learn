@@ -1,7 +1,7 @@
 import { hasOwn, isArray, isIntegerKey, isObject } from "@vue/shared/src";
-import { reactive, readonly } from "@vue/reactivity";
+import { reactive, readonly, trigger } from "@vue/reactivity";
 import { track } from "@vue/vue";
-import { TrackOpTypes } from "./operators";
+import { TrackOpTypes, TriggerOpTypes } from "./operators";
 const get = createGetter();
 const set = createSetter();
 const shallowGet = createGetter(false, true);
@@ -65,18 +65,19 @@ function createGetter(isReadonly = false, shallow = false) {
  */
 function createSetter(isReadonly = false, shallow = false) {
   return function set(target, key, value, receiver) {
+    const oldValue = target[key]; // 获取老的值
     const hadKey =
       isArray(target) && isIntegerKey(key)
         ? Number(key) < target.length
         : hasOwn(target, key);
+    const result = Reflect.set(target, key, value, receiver);
     if (!hadKey) {
       //   对象新增了属性,触发依赖的effect
-      console.log("对象新增了属性", key);
+      trigger(target, TriggerOpTypes.ADD, key, value);
     } else {
       // 对象的属性发生了更新,触发依赖的effect
-      console.log("对象的属性发生了更新", key);
+      trigger(target, TriggerOpTypes.SET, key, value, oldValue);
     }
-    const result = Reflect.set(target, key, value);
     return result;
   };
 }

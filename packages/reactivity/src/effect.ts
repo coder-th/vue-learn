@@ -1,3 +1,6 @@
+import { isArray, isIntegerKey } from "@vue/shared";
+import { TriggerOpTypes } from "./operators";
+
 /**
  * 将用户传入的函数，变成响应式的effect函数，可以做到数据变化重新执行
  * @param fn
@@ -90,5 +93,60 @@ export function track(target, type, key) {
   if (!dep.has(activeEffect)) {
     dep.add(activeEffect);
   }
-  console.log("收集了当前的依赖", targetMap);
+}
+
+export function trigger(target, type, key?, newValue?, oldValue?) {
+  console.log(target, type, key, newValue, oldValue);
+  // 如果这个属性没有被收集过 effect
+  const depsMap = targetMap.get(target);
+  if (!depsMap) return;
+
+  // 把所有的effect都放到一块
+  const effects = new Set<any>();
+  const add = (effectsToAdd: Set<any> | undefined) => {
+    if (effectsToAdd) {
+      // 过滤掉没有tracked过的属性，指对象的新增属性
+      effectsToAdd.forEach((effect) => {
+        if (effect !== activeEffect || effect.allowRecurse) {
+          effects.add(effect);
+        }
+      });
+    }
+  };
+  // 如果修改的是数组的长度，eg: arr:[1,2,3] => arr.length = 1
+  if (key === "length" && isArray(target)) {
+    // 如果对应的长度 有依赖收集需要更新
+    depsMap.forEach((dep, mapKey) => {
+      if (mapKey === "length" || mapKey > newValue) {
+        // 如果更改的长度 小于收集的索引，
+        // 那么这个收集的索引也需要触发effect重新执行, 让之前的数据变成empty
+        add(dep);
+      }
+    });
+  } else {
+    // 修改的如果是对象，eg: demo: {name: 1} => demo.name = 2或者 demo.title = 1
+    if (key !== undefined) {
+      // 如果是对象的属性的修改或者增加，
+      //由于增加属性的话,由于新增的属性，并没有被tracked过，
+      // 所以，depsMap.get(key)拿到的是undefined，在add会被忽略
+      add(depsMap.get(key));
+    }
+    switch (type) {
+      case TriggerOpTypes.ADD:
+        // 数组新增了索引，eg: arr:[1,2,3] => arr[100] = 99
+        // 因为这里新增的索引之前并没有被tracked，所以就用length的effect去执行
+        if (isArray(target) && isIntegerKey(key)) {
+          add(depsMap.get("length"));
+        }
+        break;
+    }
+  }
+  const run = (effect: any) => {
+    if (effect.options.scheduler) {
+      effect.options.scheduler(effect);
+    } else {
+      effect();
+    }
+  };
+  effects.forEach(run);
 }
