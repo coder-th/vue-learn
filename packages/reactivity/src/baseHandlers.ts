@@ -1,5 +1,7 @@
 import { hasOwn, isArray, isIntegerKey, isObject } from "@vue/shared/src";
 import { reactive, readonly } from "@vue/reactivity";
+import { track } from "@vue/vue";
+import { TrackOpTypes } from "./operators";
 const get = createGetter();
 const set = createSetter();
 const shallowGet = createGetter(false, true);
@@ -39,6 +41,8 @@ function createGetter(isReadonly = false, shallow = false) {
     const res = Reflect.get(target, key, receiver);
     if (!isReadonly) {
       // 不是只读的，说明需要待会数据更新后，要进行视图更新
+      // 执行effect的时候，会执行getter函数，这时候就可以收集依赖
+      track(target, TrackOpTypes.GET, key);
     }
     if (shallow) {
       // 浅代理，直接返回该对象就可以了
