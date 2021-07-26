@@ -1,6 +1,6 @@
 import { hasOwn, isArray, isIntegerKey, isObject } from "@vue/shared/src";
 import { reactive, readonly, trigger } from "@vue/reactivity";
-import { track } from "@vue/vue";
+import { ReactiveFlags, reactiveMap, readonlyMap, track } from "@vue/vue";
 import { TrackOpTypes, TriggerOpTypes } from "./operators";
 const get = createGetter();
 const set = createSetter();
@@ -38,6 +38,16 @@ export const shallowReadonlyHandlers = {
  */
 function createGetter(isReadonly = false, shallow = false) {
   return function get(target, key, receiver) {
+    if (key === ReactiveFlags.IS_REACTIVE) {
+      return !isReadonly;
+    } else if (key === ReactiveFlags.IS_READONLY) {
+      return isReadonly;
+    } else if (
+      key === ReactiveFlags.RAW && // toRaw()会调用
+      receiver === (isReadonly ? readonlyMap : reactiveMap).get(target) // 可以保证当前的对象是本身而不是原型链上的其他对象
+    ) {
+      return target;
+    }
     const res = Reflect.get(target, key, receiver);
     if (!isReadonly) {
       // 不是只读的，说明需要待会数据更新后，要进行视图更新

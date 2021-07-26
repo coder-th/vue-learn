@@ -19,11 +19,11 @@ const enum TargetType {
 /**
  * 用来存储需要响应式的对象
  */
-const reactiveMap = new WeakMap();
+export const reactiveMap = new WeakMap();
 /**
  * 用来存储只读对象
  */
-const readonlyMap = new WeakMap();
+export const readonlyMap = new WeakMap();
 /**
  * 创建 一个响应式代理,将结果进行缓存
  * @param target 目标对象
@@ -47,9 +47,9 @@ function createReactiveObject(target, isReadonly, baseHandlers) {
   // 只有target在可转化类型白名单里才会进行转化，否则直接返回target
   // canObserve会校验target的__v_skip是否为true、target类型是否在白名单里、target是否
   // 为冻结对象，三者同时满足才会继续转化
-  const targetType = getTargetType(target)
+  const targetType = getTargetType(target);
   if (targetType === TargetType.INVALID) {
-    return target
+    return target;
   }
   /**
    * 当前的存储器
@@ -161,6 +161,7 @@ export function isProxy(value: unknown): boolean {
  * @returns
  */
 export function toRaw<T>(observed: T): T {
+  // observed[ReactiveFlags.RAW]会触发getter函数
   return (observed && toRaw(observed[ReactiveFlags.RAW])) || observed;
 }
 /**

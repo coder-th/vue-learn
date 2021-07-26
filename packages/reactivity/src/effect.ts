@@ -141,7 +141,10 @@ export function trigger(target, type, key?, newValue?, oldValue?) {
     }
   }
   const run = (effect: any) => {
+    console.log("effect.options.scheduler", effect.options.scheduler);
+
     if (effect.options.scheduler) {
+      // 用户自定义了handler
       effect.options.scheduler(effect);
     } else {
       effect();
