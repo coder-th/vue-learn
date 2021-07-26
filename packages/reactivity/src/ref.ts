@@ -77,7 +77,6 @@ class CustomRefImpl {
       () => track(this, TrackOpTypes.GET, "value"),
       () => trigger(this, TriggerOpTypes.SET, "value")
     );
-    console.log(get, set);
     this._get = get;
     this._set = set;
   }
