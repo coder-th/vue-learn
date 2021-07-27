@@ -39,11 +39,13 @@ function createReactiveEffect(fn, options) {
     // 如果在栈已经存在了,就不放了，防止一个函数多次执行
     if (!effectStack.includes(effect)) {
       try {
+        enableTracking();
         effectStack.push(effect);
         activeEffect = effect;
         return fn(); // 执行用户的fn函数，里面的依赖会触发get方法
       } finally {
         effectStack.pop();
+        resetTracking();
         activeEffect = effectStack[effectStack.length - 1];
       }
     }
@@ -151,4 +153,27 @@ export function trigger(target, type, key?, newValue?, oldValue?) {
     }
   };
   effects.forEach(run);
+}
+
+/**
+ * 当前能否进行跟踪,这样做的原因是可以管控跟踪依赖的流程，具有可控性
+ */
+let shouldTrack = true;
+/**
+ * 用栈来维护着，好处的是，可以不用管之前shouldTrack，可以确保shouldTrack的状态是我想要控制的。
+ * 也就是说，在进行管控之前，我不需要清楚上一次的shouldTrack状态，只需要存起来，要用的时候等reset就可以了
+ */
+const trackStack: boolean[] = [];
+export function pauseTracking() {
+  // 记住一定要先push在重新设置trackStack的状态
+  trackStack.push(shouldTrack);
+  shouldTrack = false;
+}
+export function enableTracking() {
+  trackStack.push(shouldTrack);
+  shouldTrack = true;
+}
+export function resetTracking() {
+  const last = trackStack.pop();
+  shouldTrack = last === undefined ? true : last;
 }
