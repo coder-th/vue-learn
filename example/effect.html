@@ -16,11 +16,13 @@
   let { effect, reactive } = Vue;
   let state = reactive({ name: "zf", age: 12, arr: [1, 2, 3] });
   effect(() => {
-    console.log("render", state.arr);
-    app.innerHTML = state.arr; // 会取长度
+    app.innerHTML = state.name; // 会取长度
+    effect(() => {
+      app.innerHTML = state.name + '9999'; // 会取长度666
+    })
   });
   setTimeout(() => {
-    state.arr[100] = 1; // 更改namne属性需要重新执行
+    state.name = 66; // 更改namne属性需要重新执行
   }, 1000);
 
     // 1. effect中的所有属性 都会收集effect  track

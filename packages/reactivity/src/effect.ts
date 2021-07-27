@@ -36,8 +36,11 @@ let activeEffect;
  */
 function createReactiveEffect(fn, options) {
   const effect = function reactiveEffect() {
-    // 如果在栈已经存在了,就不放了，防止一个函数多次执行
+    // 如果在栈已经存在了,说明该effect之前已经创建过了，那就不放了，防止一个函数多次执行,
+    // 否则添加当前effect
     if (!effectStack.includes(effect)) {
+      // 添加的effect需要清除一下依赖，这样可以减少添加重复和无用的依赖,删掉保存自己的effect
+      // cleanup(effect);
       try {
         enableTracking();
         effectStack.push(effect);
@@ -82,8 +85,8 @@ const targetMap = new WeakMap();
  * @param key
  */
 export function track(target, type, key) {
-  // 当前没有在某个effect作用域中
-  if (!activeEffect) return;
+  // 当前没有在某个effect作用域中或者无法进行依赖收集
+  if (!activeEffect || !shouldTrack) return;
   let depsMap = targetMap.get(target);
   if (!depsMap) {
     targetMap.set(target, (depsMap = new Map()));
@@ -94,6 +97,9 @@ export function track(target, type, key) {
   }
   if (!dep.has(activeEffect)) {
     dep.add(activeEffect);
+    // 当前的effect上保存该属性的所有依赖，因为该属性的所有依赖非常重要，
+    // 这样做的目的是，当我执行某一个依赖的时候，我可以很方便的知道跟我一样拥有这个属性的的所有依赖
+    activeEffect.deps.push(dep);
   }
 }
 
@@ -176,4 +182,17 @@ export function enableTracking() {
 export function resetTracking() {
   const last = trackStack.pop();
   shouldTrack = last === undefined ? true : last;
+}
+/**
+ * 过滤掉自身的effect
+ * @param effect
+ */
+export function cleanup(effect) {
+  const { deps } = effect;
+  if (deps.length) {
+    for (let i = 0; i < deps.length; i++) {
+      deps[i].delete(effect);
+    }
+    deps.length = 0;
+  }
 }
