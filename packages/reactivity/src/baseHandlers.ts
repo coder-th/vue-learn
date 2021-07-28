@@ -4,6 +4,8 @@ import {
   isArray,
   isIntegerKey,
   isObject,
+  isSymbol,
+  makeMap,
 } from "@vue/shared/src";
 import { reactive, readonly, trigger } from "@vue/reactivity";
 import {
@@ -115,6 +117,14 @@ function createGetter(isReadonly = false, shallow = false) {
       return Reflect.get(arrayInstrumentations, key, receiver);
     }
     const res = Reflect.get(target, key, receiver);
+    // 访问的是内建的属性，那么直接返回
+    if (
+      isSymbol(key)
+        ? builtInSymbols.has(key as symbol)
+        : isNonTrackableKeys(key)
+    ) {
+      return res;
+    }
     if (!isReadonly) {
       // 不是只读的，说明需要待会数据更新后，要进行视图更新
       // 执行effect的时候，会执行getter函数，这时候就可以收集依赖
@@ -176,3 +186,13 @@ function createSetter(isReadonly = false, shallow = false) {
     return result;
   };
 }
+/**
+ * vue内部和对象内部自己的属性，这些属性并不是用户可以去操作的
+ * 这些属性，就不进行tracked了
+ */
+const isNonTrackableKeys = makeMap(`__proto__,__v_isRef,__isVue`);
+const builtInSymbols = new Set(
+  Object.getOwnPropertyNames(Symbol)
+    .map((key) => (Symbol as any)[key])
+    .filter(isSymbol)
+);
