@@ -195,3 +195,7 @@ export function cleanup(effect) {
     deps.length = 0;
   }
 }
+
+export function isRef(r: any) {
+  return Boolean(r && r.__v_isRef === true);
+}

@@ -7,6 +7,7 @@ import {
 } from "@vue/shared/src";
 import { reactive, readonly, trigger } from "@vue/reactivity";
 import {
+  isRef,
   pauseTracking,
   ReactiveFlags,
   reactiveMap,
@@ -140,7 +141,22 @@ function createGetter(isReadonly = false, shallow = false) {
  */
 function createSetter(isReadonly = false, shallow = false) {
   return function set(target, key, value, receiver) {
-    const oldValue = target[key]; // 获取老的值
+    let oldValue = target[key]; // 获取老的值
+    if (!shallow) {
+      value = toRaw(value);
+      oldValue = toRaw(oldValue);
+      // 不是数组，旧的值是一个ref, 新的不是
+      if (!isArray(target) && isRef(oldValue) && !isRef(value)) {
+        /**
+         * 用户使用了新的值替代了ref
+         * 正常使用： ref.value = xxxx
+         * 但是用户直接  ref = xxx
+         * 处理： 将xxx赋值给旧的ref.value
+         */
+        oldValue.value = value;
+        return true;
+      }
+    }
     const hadKey =
       isArray(target) && isIntegerKey(key)
         ? Number(key) < target.length
