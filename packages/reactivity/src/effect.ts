@@ -124,6 +124,7 @@ export function trigger(target, type, key?, newValue?, oldValue?) {
   if (key === "length" && isArray(target)) {
     // 如果对应的长度 有依赖收集需要更新
     depsMap.forEach((dep, mapKey) => {
+      // 当访问长度或者大的索引值的时候
       if (mapKey === "length" || mapKey > newValue) {
         // 如果更改的长度 小于收集的索引，
         // 那么这个收集的索引也需要触发effect重新执行, 让之前的数据变成empty
@@ -149,8 +150,6 @@ export function trigger(target, type, key?, newValue?, oldValue?) {
     }
   }
   const run = (effect: any) => {
-    console.log("effect.options.scheduler", effect.options.scheduler);
-
     if (effect.options.scheduler) {
       // 用户自定义了handler
       effect.options.scheduler(effect);
