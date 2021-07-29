@@ -29,3 +29,4 @@ export function patchProp(el, key, prevValue, nextValue) {
       break;
   }
 }
+export const forcePatchProp = (_, key) => key === "value";

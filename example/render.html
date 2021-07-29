@@ -14,7 +14,18 @@
 </body>
 <script>
     const { createApp } = Vue
-    console.log(createApp);
+    let App = {
+        setup() {
+            const title = 'qy'
+            return {
+                title
+            }
+        },
+        render() {
+            return 'hello world'
+        }
+    }
+    createApp(App).mount('#app')
 </script>
 
 </html>

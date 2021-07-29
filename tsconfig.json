@@ -67,9 +67,13 @@
     "skipLibCheck": true /* Skip type checking of declaration files. */,
     "forceConsistentCasingInFileNames": true /* Disallow inconsistently-cased references to the same file. */,
     "moduleResolution": "node",
-    "baseUrl": ".",
+    "baseUrl": "./",
+    "typeRoots": ["./node_modules/@types/", "./types"],
     "paths": {
       "@vue/*": ["packages/*/src"]
     }
-  }
+  },
+  "include": ["packages/*/src", "types/**/*.d.ts"],
+  // ts编译和检查排除的文件或者文件夹
+  "exclude": ["node_modules", "dist", "**/*.js"]
 }
