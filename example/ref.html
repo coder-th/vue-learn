@@ -14,7 +14,7 @@
     <div id="container"></div>
 </body>
 <script>
-    const { customRef, effect } = Vue;
+    const { customRef, effect, ref } = Vue;
     const custom = function (value) {
         return customRef((track, trigger) => {
             const get = () => {
@@ -32,12 +32,14 @@
         })
     }
     const data = custom('123')
+    const text = ref('666')
     effect(() => {
         container.innerHTML = data.value
         console.log(custom('123'));
     })
     setTimeout(() => {
-        data.value = 456
+        text.value = { name: 666 }
+        console.log(text);
     }, 3000)
 </script>
 
