@@ -1,5 +1,5 @@
 import { hasChanged, isArray, isObject } from "@vue/shared";
-import { reactive, track, trigger } from "@vue/vue";
+import { isReactive, reactive, track, trigger } from "@vue/vue";
 import { TrackOpTypes, TriggerOpTypes } from "./operators";
 
 export function ref(value) {
@@ -90,4 +90,24 @@ class CustomRefImpl {
 
 export function isRef(r: any) {
   return Boolean(r && r.__v_isRef === true);
+}
+export function unref(ref) {
+  return isRef(ref) ? (ref.value as any) : ref;
+}
+const shallowUnwrapHandlers: ProxyHandler<any> = {
+  get: (target, key, receiver) => unref(Reflect.get(target, key, receiver)),
+  set: (target, key, value, receiver) => {
+    const oldValue = target[key];
+    if (isRef(oldValue) && !isRef(value)) {
+      oldValue.value = value;
+      return true;
+    } else {
+      return Reflect.set(target, key, value, receiver);
+    }
+  },
+};
+export function proxyRefs(objectWithRefs) {
+  return isReactive(objectWithRefs)
+    ? objectWithRefs
+    : new Proxy(objectWithRefs, shallowUnwrapHandlers);
 }

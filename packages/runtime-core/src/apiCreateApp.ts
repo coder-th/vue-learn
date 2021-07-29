@@ -1,8 +1,9 @@
+import { isFunction } from "@vue/shared";
+import { createVNode } from "./vnode";
+
 let uid = 0;
 export function createAppAPI(render) {
   return function createApp(rootComponent, rootProps = null) {
-    console.log(rootComponent, rootProps);
-
     let isMounted = false;
 
     const app = {
@@ -13,7 +14,8 @@ export function createAppAPI(render) {
 
       mount(rootContainer: HTMLElement, isSVG?: boolean) {
         if (!isMounted) {
-          render(rootContainer);
+          const vnode = createVNode(rootComponent, rootProps);
+          render(vnode, rootContainer);
         }
       },
     };

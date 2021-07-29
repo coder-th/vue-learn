@@ -13,16 +13,15 @@
     <div id="app"></div>
 </body>
 <script>
-    const { createApp } = Vue
+    let { createApp, setup, render, h, ref } = Vue
     let App = {
         setup() {
-            const title = 'qy'
-            return {
-                title
-            }
-        },
-        render() {
-            return 'hello world'
+            const title = ref('千云')
+            return () => h('div', {
+                style: { backgroundColor: 'red' }, onClick: () => {
+                    title.value = title.value + 6
+                }
+            }, title.value)
         }
     }
     createApp(App).mount('#app')
