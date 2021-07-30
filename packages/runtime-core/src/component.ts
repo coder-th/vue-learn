@@ -26,9 +26,6 @@ export function createComponentInstance(vnode, parent) {
 export function setupComponent(instance) {
   // 判断当前组件是不是有状态的组件
   const isStateful = isStatefulComponent(instance);
-  console.log("isStatefulComponent", instance);
-
-  console.log("isStateful", isStateful);
 
   const setupResult = isStateful ? setupStatefulComponent(instance) : undefined;
   return setupResult;
@@ -63,15 +60,12 @@ export function finishComponentSetup(instance) {
   // 3. 用户压根就没写render函数，那么就拿到template进行compile生成一个render函数
   // 优先级 1 > 2 > 3
   const Component = instance.type;
-  console.log("instance.render", instance.render);
-  console.log("Component.render", Component.render);
 
   if (instance.render || Component.render) {
     instance.render = instance.render || Component.render;
   } else {
     // 通过模板编译拿到render函数
   }
-  console.log("finishComponentSetup", instance.render);
 }
 export function handleSetupResult(instance, setupResult) {
   if (isFunction(setupResult)) {
@@ -83,3 +77,4 @@ export function handleSetupResult(instance, setupResult) {
   }
   finishComponentSetup(instance);
 }
+

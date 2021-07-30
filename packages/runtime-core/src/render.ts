@@ -20,7 +20,6 @@ function baseCreateRender(options) {
       n1 = null;
     }
     const { type, shapeFlag } = n2;
-    console.log("baseCreateRender", container);
 
     switch (type) {
       case Text:
@@ -63,16 +62,12 @@ function baseCreateRender(options) {
     }
   };
   const processElement = (n1, n2, container, anchor, parentComponent) => {
-    console.log("processElement", n1, n2, container);
     if (n1 === null) {
       // 第一次挂载
       mountElement(n2, container, anchor, parentComponent);
     }
   };
   const processComponent = (n1, n2, container, anchor, parentComponent) => {
-    console.log("processComponent", n1, n2, container);
-    console.log(container);
-
     if (n1 === null) {
       // 第一次挂载
       mountComponent(n2, container, anchor, parentComponent);
@@ -92,7 +87,6 @@ function baseCreateRender(options) {
   const mountElement = (vnode, container, anchor, parentComponent) => {
     let el;
     const { type, props, shapeFlag } = vnode;
-    console.log("mountElement", type, props);
 
     el = vnode.el = hostCreateElement(type, false, props && props.is, props);
     if (shapeFlag & ShapeFlags.TEXT_CHILDREN) {
@@ -120,10 +114,8 @@ function baseCreateRender(options) {
       if (!instance.isMounted) {
         // 当前组件还没被挂载
         // 得到新的组件节点，作为下一级
-        console.log("setupRenderEffect", instance);
 
         const subTree = (instance.subTree = renderComponentRoot(instance));
-        console.log("subTree", subTree);
 
         patch(null, subTree, container, anchor, instance);
       }
@@ -147,11 +139,10 @@ function baseCreateRender(options) {
     insertStaticContent: hostInsertStaticContent,
   } = options;
   const render = (vnode, container) => {
-    console.log("render", container);
-
     if (vnode === null) {
       if (container._vnode) {
         // 容器之前挂载过节点，现在要卸载节点
+          
       }
     } else {
       patch(container._vnode || null, vnode, container);

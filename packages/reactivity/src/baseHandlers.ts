@@ -98,7 +98,6 @@ const arrayInstrumentations: Record<string, Function> = {};
  */
 function createGetter(isReadonly = false, shallow = false) {
   return function get(target, key, receiver) {
-    console.log("get操作", target, key, receiver);
     if (key === ReactiveFlags.IS_REACTIVE) {
       return !isReadonly;
     } else if (key === ReactiveFlags.IS_READONLY) {

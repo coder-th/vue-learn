@@ -15,7 +15,6 @@ export function createVNode(type, props?, children: unknown = null) {
   if (!type) {
     type = Comment;
   }
-  console.log("isVNode", type);
 
   // class & style normalization.标准化class和style属性
   if (props) {
@@ -56,7 +55,6 @@ export function createVNode(type, props?, children: unknown = null) {
     component: null,
     el: null,
   };
-  console.log("createVNode", vnode);
   normalizeChildren(vnode, children);
   return vnode;
 }
@@ -111,9 +109,6 @@ export function cloneVNode(vnode, extraProps?) {
  */
 export function normalizeChildren(vnode, children) {
   let type = 0;
-  const { shapeFlag } = vnode;
-  console.log("normalizeChildren", vnode, children);
-
   if (children == null) {
     children = null;
   } else if (isArray(children)) {

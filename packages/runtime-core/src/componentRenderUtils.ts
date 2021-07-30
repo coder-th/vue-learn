@@ -7,23 +7,17 @@ import { normalizeVNode } from "./vnode";
  */
 export function renderComponentRoot(instance) {
   const { type: Component, vnode, render, props } = instance;
-  console.log("renderComponentRoot", instance);
-
   let result;
   try {
-    console.log("renderComponentRoot-render", render);
-
     if (vnode.shapeFlag & ShapeFlags.STATEFUL_COMPONENT) {
       result = normalizeVNode(render!.call(instance, props));
     } else {
       const render = Component;
       result = normalizeVNode(render!.call(instance, props));
     }
-    // let root = result
+    instance.root = result;
   } catch (error) {
     console.log(error);
   }
-  console.log("result", result);
-
   return result;
 }
