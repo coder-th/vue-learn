@@ -24,6 +24,8 @@ function baseCreateRender(options) {
     switch (type) {
       case Text:
         processText(n1, n2, container, anchor);
+      case Comment:
+        processCommentNode(n1, n2, container, anchor);
       default:
         if (shapeFlag & ShapeFlags.ELEMENT) {
           // 用户传的是dom元素
@@ -114,10 +116,13 @@ function baseCreateRender(options) {
       if (!instance.isMounted) {
         // 当前组件还没被挂载
         // 得到新的组件节点，作为下一级
-
         const subTree = (instance.subTree = renderComponentRoot(instance));
-
         patch(null, subTree, container, anchor, instance);
+        instance.isMounted = true;
+        initialVNode = container = anchor = null as any;
+      } else {
+        // 更新组件
+        //TODO:使用dom-diff进行patch，决定最终要更新的部分
       }
     });
   };
@@ -142,7 +147,6 @@ function baseCreateRender(options) {
     if (vnode === null) {
       if (container._vnode) {
         // 容器之前挂载过节点，现在要卸载节点
-          
       }
     } else {
       patch(container._vnode || null, vnode, container);

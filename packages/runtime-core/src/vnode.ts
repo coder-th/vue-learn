@@ -54,6 +54,8 @@ export function createVNode(type, props?, children: unknown = null) {
     children: null,
     component: null,
     el: null,
+    appContext: null,
+    anchor: null, // 保存全局上下文，方便在每个虚拟节点都能访问到
   };
   normalizeChildren(vnode, children);
   return vnode;
@@ -98,6 +100,7 @@ export function cloneVNode(vnode, extraProps?) {
     el: vnode.el,
     anchor: vnode.anchor,
     component: vnode.component,
+    appContext: vnode.appContext,
   };
 
   return cloneNode;

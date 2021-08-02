@@ -2,29 +2,47 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
 </head>
-<script src="../packages/vue/dist/vue.global.js"></script>
+
 
 <body>
     <div id="app"></div>
-</body>
-<script>
-    let { createApp, setup, render, h, ref } = Vue
-    let App = {
-        setup() {
-            const title = ref('千云')
-            return () => h('div', {
-                style: { backgroundColor: 'red' }, onClick: () => {
-                    title.value = title.value + 6
+    <script src="../packages//vue//dist/vue.global.js"></script>
+    <script>
+        let { createApp, setup, render, h, ref } = Vue
+        let App = {
+            template: `<div>123</div>`,
+            data: () => {
+                return {
+                    name: '千云'
                 }
-            }, title.value)
+            },
+            setup(state) {
+                const title = ref('qianyun')
+                // return () => h('div', {
+                //     style: { backgroundColor: 'red' }, onClick: () => {
+                //         title.value = title.value + 6
+                //         console.log(title);
+                //     }
+                // }, title.value)
+                return {
+                    title
+                }
+            },
+            render(data) {
+                return h('div', {
+                    style: { backgroundColor: 'red' }, onClick: () => {
+                        app.innerHTML = data.name
+                    }
+                }, data.title)
+            }
         }
-    }
-    createApp(App).mount('#app')
-</script>
+        createApp(App).mount('#app')
+    </script>
+</body>
 
 </html>
